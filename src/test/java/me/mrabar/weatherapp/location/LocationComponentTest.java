@@ -1,7 +1,5 @@
 package me.mrabar.weatherapp.location;
 
-import me.mrabar.weatherapp.weather.WeatherComponent;
-import me.mrabar.weatherapp.weather.WeatherResult;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 
@@ -25,7 +23,7 @@ class LocationComponentTest {
   void returnsEmptyFromBrokenFinderComponent() {
     var locationComponent = new LocationComponent(List.of(ip -> Mono.empty()));
 
-    var result = locationComponent.getLocation("8.8.8.8").singleOrEmpty().block();
+    var result = locationComponent.getLocation("8.8.8.8").block();
     assertNull(result);
   }
 
@@ -37,11 +35,10 @@ class LocationComponentTest {
         ip -> Mono.just(new Location(Optional.of("Very cool city"), "This request cost you 0.05$"))
     ));
 
-    var result = locationComponent.getLocation("8.8.8.8").singleOrEmpty().block();
+    var result = locationComponent.getLocation("8.8.8.8").block();
     assertNotNull(result);
     assertEquals(Optional.empty(), result.city());
     assertEquals("CoolCountry", result.country());
 
-    assertTrue(locationComponent.getLocation("8.8.8.8").all(f -> f.country().equals("CoolCountry")).block());
   }
 }

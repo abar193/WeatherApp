@@ -35,4 +35,11 @@ class WeatherHandlerTest {
         .exchange()
         .expectStatus().isOk();
   }
+
+  @Test
+  void testIpEndpoint() {
+    webClient.get().uri("/ip?ip=8.8.8.8")
+        .exchange()
+        .expectStatus().isOk();
+  }
 }

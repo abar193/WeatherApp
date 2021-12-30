@@ -13,6 +13,7 @@ public class RouteConfig {
   @Bean
   public RouterFunction<ServerResponse> route(WeatherHandler someHandler) {
     return RouterFunctions
-        .route(GET("/weather"), someHandler::weather);
+        .route(GET("/weather"), someHandler::weather)
+        .andRoute(GET("/ip"), someHandler::ipLookup);
   }
 }

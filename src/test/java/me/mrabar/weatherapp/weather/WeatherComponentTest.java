@@ -26,7 +26,7 @@ class WeatherComponentTest {
   void returnsNothingWithBrokenLookupComponent() {
     var weatherComponent = new WeatherComponent(List.of(loc -> Mono.empty()));
 
-    var result = weatherComponent.getWeather(new Location(Optional.empty(), "")).singleOrEmpty().block();
+    var result = weatherComponent.getWeather(new Location(Optional.empty(), "")).block();
     assertNull(result);
   }
 
@@ -40,7 +40,7 @@ class WeatherComponentTest {
         loc -> {throw new RuntimeException("Whoops");}
     ));
 
-    var result = weatherComponent.getWeather(new Location(Optional.empty(), "")).singleOrEmpty().block();
+    var result = weatherComponent.getWeather(new Location(Optional.empty(), "")).block();
 
     assertNotNull(result);
     assertEquals("loc", result.location());
