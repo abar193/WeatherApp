@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.6.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.liquibase.gradle' version '2.1.0'
     id 'java'
 }
 
@@ -8,10 +9,12 @@ group = 'me.mrabar'
 version = '0.0.1'
 sourceCompatibility = '17'
 
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    liquibaseRuntime.extendsFrom runtime
 }
 
 repositories {
@@ -42,6 +45,11 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:r2dbc'
+
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.5.0'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:3.0.2'
+    liquibaseRuntime 'org.postgresql:postgresql'
+    liquibaseRuntime group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 }
 
 dependencyManagement {
@@ -52,4 +60,21 @@ dependencyManagement {
 
 test {
     useJUnitPlatform()
+}
+
+liquibase {
+    mainClassName = 'liquibase.integration.commandline.Main'
+    activities {
+        main {
+            changeLogFile 'src/main/resources/db.changelog/log.xml'
+            url 'jdbc:postgresql://localhost:5432/weather'
+            username 'weather'
+            password 'secretpass'
+        }
+
+        snapshot {
+            changeLogFile 'src/main/resources/db.changelog/snapshot.xml'
+
+        }
+    }
 }

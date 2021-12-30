@@ -1,6 +1,5 @@
 package me.mrabar.weatherapp.weather.loaders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import me.mrabar.weatherapp.location.Location;
@@ -13,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
@@ -43,7 +43,10 @@ public class WeatherApiCom implements WeatherLookup {
   private static WeatherResult parseResponseMap(Map<String, Object> map) {
     var loc = (Map<String, String>) map.get("location");
     var current = (Map<String, Object>) map.get("current");
-    var condition = (Map<String, String>) current.get("condition");
+    var condition = Optional.ofNullable(current)
+        .map(c -> c.get("condition"))
+        .map(c -> (Map<String, String>) c)
+        .orElse(Map.of());
 
     var locationDesc = String.format(
         "%s, %s, %s",
